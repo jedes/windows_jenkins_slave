@@ -18,7 +18,7 @@ if "%1"=="" (
 ) else (
 	rem if -tunnel is not provided try env vars
 	for %%i in (%*) do if "%%i"=="-tunnel" goto :has_tunnel
-	if not "!JENKINS_TUNNEL!"=="" (set TUNNEL="-tunnel !JENKINS_TUNNEL!")
+	if not "!JENKINS_TUNNEL!"=="" (set TUNNEL=-tunnel !JENKINS_TUNNEL!)
 :has_tunnel
 	rem resume after label...
 
@@ -27,18 +27,18 @@ if "%1"=="" (
 			echo "Warning: Work directory is defined twice in command-line arguments and the environment variable"
 			goto :workdir_defined
 		)
-		set WORKDIR="-workDir !JENKINS_AGENT_WORKDIR!"
+		set WORKDIR=-workDir !JENKINS_AGENT_WORKDIR!
 	)
 :workdir_defined
 	rem resume after label...
 	
-	if not "!JENKINS_URL!"=="" set URL="-url !JENKINS_URL!"
+	if not "!JENKINS_URL!"=="" set URL=-url !JENKINS_URL!
 
-	if not "!JENKINS_NAME!"=="" set JENKINS_AGENT_NAME="!JENKINS_NAME!"
+	if not "!JENKINS_NAME!"=="" set JENKINS_AGENT_NAME=!JENKINS_NAME!
 
 	if "!JNLP_PROTOCOL_OPTS!"=="" (
 		echo "Warning: JnlpProtocol3 is disabled by default, use JNLP_PROTOCOL_OPTS to alter the behavior"
-		set JNLP_PROTOCOL_OPTS "-Dorg.jenkinsci.remoting.engine.JnlpProtocol3.disabled=true"
+		set JNLP_PROTOCOL_OPTS=-Dorg.jenkinsci.remoting.engine.JnlpProtocol3.disabled=true
 	)
 
 	rem If both required options are defined, do not pass the parameters
@@ -48,7 +48,7 @@ if "%1"=="" (
 			echo "Warning: SECRET is defined twice in command-line arguments and the environment variable"
 			goto :secret_defined
 		)
-		set OPT_JENKINS_SECRET="!JENKINS_SECRET!"
+		set OPT_JENKINS_SECRET=!JENKINS_SECRET!
 	)
 :secret_defined
 	rem resume after label...
@@ -60,10 +60,10 @@ if "%1"=="" (
 			echo "Warning: AGENT_NAME is defined twice in command-line arguments and the environment variable"
 			goto :agent_name_defined
 		)
-		set OPT_JENKINS_AGENT_NAME="!JENKINS_AGENT_NAME!"
+		set OPT_JENKINS_AGENT_NAME=!JENKINS_AGENT_NAME!
 	)
 :agent_name_defined
 	rem resume after label...
 
-	java !JAVA_OPTS! !JNLP_PROTOCOL_OPTS! -cp c:\jenkins_slave\slave.jar hudson.remoting.jnlp.Main -headless !TUNNEL! !URL! !WORKDIR! !OPT_JENKINS_SECRET! !OPT_JENKINS_AGENT_NAME! "%*"
+	java !JAVA_OPTS! !JNLP_PROTOCOL_OPTS! -cp c:\jenkins_slave\slave.jar hudson.remoting.jnlp.Main -headless !TUNNEL! !URL! !WORKDIR! !OPT_JENKINS_SECRET! !OPT_JENKINS_AGENT_NAME! %*
 )
